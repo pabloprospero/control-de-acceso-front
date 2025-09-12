@@ -17,40 +17,40 @@ interface Camara {
 
 export default function Page() {
   const [camaras, setCamaras] = useState<Camara[]>([]);
-  const [authToken, setAuthToken] = useState<string | string>("");
+  const [authToken, setAuthToken] = useState<string | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token") ?? "";
     setAuthToken(token);
   }, []);
 
+  const fetchCamaras = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cameras`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + authToken,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}`);
+      }
+
+      const data = await response.json();
+      setCamaras(data);
+    } catch (error) {
+      console.error("Error fetching camaras:", error);
+    }
+  };
+
   useEffect(() => {
     if (!authToken) return;
-    const fetchCamaras = async () => {
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cameras`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + authToken,
-          },
-        });
-        if (!response.ok) {
-          throw new Error(`Error ${response.status}`);
-        }
-
-        const data = await response.json();
-        setCamaras(data);
-      } catch (error) {
-        console.error("Error fetching camaras:", error);
-      }
-    };
-
     fetchCamaras();
   }, [authToken]);
 
   return (
     <div>
-      <CreateCameraDialog />
+      <CreateCameraDialog fetchData={fetchCamaras} />
       <div className="flex flex-col gap-4 md:gap-6">
         <TableCards camaras={camaras} />
       </div>

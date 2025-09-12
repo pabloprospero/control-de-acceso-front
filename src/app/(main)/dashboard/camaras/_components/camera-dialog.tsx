@@ -10,7 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Toggle } from "@/components/ui/toggle";
 
-export default function CreateCameraDialog() {
+export default function CreateCameraDialog({ fetchData }) {
+  const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -21,7 +22,7 @@ export default function CreateCameraDialog() {
     userExternalId: "",
   });
 
-  const [authToken, setAuthToken] = useState<string | string>("");
+  const [authToken, setAuthToken] = useState<string | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token") ?? "";
@@ -58,8 +59,10 @@ export default function CreateCameraDialog() {
         locationExternalId: "",
         position: "entry",
         status: true,
-        userExternalId: authToken,
+        userExternalId: "",
       });
+      setOpen(false);
+      fetchData();
     } catch (error) {
       console.error(error);
       alert("Hubo un error al crear la cámara ❌");
@@ -70,7 +73,7 @@ export default function CreateCameraDialog() {
     setFormData({ ...formData, status: value });
   };
 
-  const [locations, setLocations] = useState<{ id: string; name: string }[]>([]);
+  const [locations, setLocations] = useState<{ externalId: string; name: string }[]>([]);
 
   useEffect(() => {
     if (!authToken) return;
@@ -85,7 +88,7 @@ export default function CreateCameraDialog() {
   }, [authToken]);
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>Nueva Cámara</Button>
       </DialogTrigger>
@@ -163,7 +166,7 @@ export default function CreateCameraDialog() {
             >
               <option value="">Selecciona ubicación</option>
               {locations.map((loc) => (
-                <option key={loc.id} value={loc.id}>
+                <option key={loc.externalId} value={loc.externalId}>
                   {loc.name}
                 </option>
               ))}
