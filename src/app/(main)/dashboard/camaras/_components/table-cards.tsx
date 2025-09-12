@@ -10,11 +10,10 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardAction }
 import { useDataTableInstance } from "@/hooks/use-data-table-instance";
 
 import { recentLeadsColumns } from "./columns.crm";
-import { recentLeadsData } from "./crm.config";
 
-export function TableCards() {
+export function TableCards(props) {
   const table = useDataTableInstance({
-    data: recentLeadsData,
+    data: props.camaras,
     columns: recentLeadsColumns,
     getRowId: (row) => row.id.toString(),
   });
@@ -23,15 +22,14 @@ export function TableCards() {
     <div className="grid grid-cols-1 gap-4 *:data-[slot=card]:shadow-xs">
       <Card>
         <CardHeader>
-          <CardTitle>Recent Leads</CardTitle>
-          <CardDescription>Track and manage your latest leads and their status.</CardDescription>
+          <CardTitle>Cámaras</CardTitle>
           <CardAction>
             <div className="flex items-center gap-2">
               <DataTableViewOptions table={table} />
-              <Button variant="outline" size="sm">
+              {/* <Button variant="outline" size="sm">
                 <Download />
                 <span className="hidden lg:inline">Export</span>
-              </Button>
+              </Button> */}
             </div>
           </CardAction>
         </CardHeader>
