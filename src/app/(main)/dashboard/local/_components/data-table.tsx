@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-
 import { z } from "zod";
 
 import { Label } from "@/components/ui/label";
@@ -15,12 +14,16 @@ import { DataTableViewOptions } from "../../../../../components/data-table/data-
 import { withDndColumn } from "../../../../../components/data-table/table-utils";
 
 import { dashboardColumns } from "./columns";
-import { eventsResponseSchema } from "./schema";
+import { locationsResponseSchema } from "./schema";
 
-export function DataTable({ data: initialData }: { data: z.infer<typeof eventsResponseSchema>[] }) {
+export function DataTable({ data: initialData }: { data: z.infer<typeof locationsResponseSchema> }) {
   const [data, setData] = React.useState(() => initialData);
   const columns = withDndColumn(dashboardColumns);
-  const table = useDataTableInstance({ data, columns, getRowId: (row) => row.id.toString() });
+  const table = useDataTableInstance({
+    data,
+    columns,
+    getRowId: (row) => row.externalId.toString(),
+  });
 
   return (
     <Tabs defaultValue="outline" className="w-full flex-col justify-start gap-6">
@@ -32,6 +35,12 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof eventsRe
           <SelectTrigger className="flex w-fit @4xl/main:hidden" size="sm" id="view-selector">
             <SelectValue placeholder="Select a view" />
           </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="outline">Outline</SelectItem>
+            <SelectItem value="past-performance">Historial</SelectItem>
+            <SelectItem value="key-personnel">Equipo</SelectItem>
+            <SelectItem value="focus-documents">Documentos</SelectItem>
+          </SelectContent>
         </Select>
         <div className="flex items-center gap-2">
           <DataTableViewOptions table={table} />

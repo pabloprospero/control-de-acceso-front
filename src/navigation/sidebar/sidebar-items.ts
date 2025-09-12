@@ -17,6 +17,7 @@ import {
   GraduationCap,
   type LucideIcon,
   CameraIcon,
+  Settings,
 } from "lucide-react";
 
 export interface NavSubItem {
@@ -50,7 +51,7 @@ export const sidebarItems: NavGroup[] = [
     label: "Dashboards",
     items: [
       {
-        title: "Default",
+        title: "Control de Ingreso",
         url: "/dashboard/default",
         icon: LayoutDashboard,
       },
@@ -95,69 +96,13 @@ export const sidebarItems: NavGroup[] = [
     label: "Pages",
     items: [
       {
-        title: "Email",
-        url: "/dashboard",
-        icon: Mail,
-        comingSoon: true,
-      },
-      {
-        title: "Chat",
-        url: "/dashboard",
-        icon: MessageSquare,
-        comingSoon: true,
-      },
-      {
-        title: "Calendar",
-        url: "/dashboard",
-        icon: Calendar,
-        comingSoon: true,
-      },
-      {
-        title: "Kanban",
-        url: "/dashboard",
-        icon: Kanban,
-        comingSoon: true,
-      },
-      {
-        title: "Invoice",
-        url: "/dashboard",
-        icon: ReceiptText,
-        comingSoon: true,
-      },
-      {
-        title: "Users",
-        url: "/dashboard",
-        icon: Users,
-        comingSoon: true,
-      },
-      {
-        title: "Roles",
-        url: "/dashboard",
-        icon: Lock,
-        comingSoon: true,
-      },
-      {
-        title: "Authentication",
+        title: "Configuraciones",
         url: "/auth",
-        icon: Fingerprint,
+        icon: Settings,
         subItems: [
-          { title: "Login v1", url: "/auth/v1/login", newTab: true },
-          { title: "Login v2", url: "/auth/v2/login", newTab: true },
-          { title: "Register v1", url: "/auth/v1/register", newTab: true },
-          { title: "Register v2", url: "/auth/v2/register", newTab: true },
+          { title: "Local", url: "/dashboard/local" },
+          { title: "Camaras", url: "/auth/v2/login" },
         ],
-      },
-    ],
-  },
-  {
-    id: 3,
-    label: "Misc",
-    items: [
-      {
-        title: "Others",
-        url: "/dashboard",
-        icon: SquareArrowUpRight,
-        comingSoon: true,
       },
     ],
   },

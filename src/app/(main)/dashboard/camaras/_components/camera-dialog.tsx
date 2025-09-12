@@ -15,7 +15,7 @@ export default function CreateCameraDialog() {
     name: "",
     description: "",
     url: "",
-    locationId: "",
+    locationExternalId: "",
     position: "",
     status: true,
     userExternalId: "",
@@ -25,10 +25,7 @@ export default function CreateCameraDialog() {
 
   useEffect(() => {
     const token = localStorage.getItem("token") ?? "";
-    // setAuthToken(token);
-    setAuthToken(
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHRlcm5hbElkIjoiYzcyMDc0NTUtMmZkMC00ZjliLTgxNjYtYzAxZGRkOGZiOTQyIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzU3Njk0MTQ3LCJleHAiOjE3NTc3MjI5NDd9.EfAn1SVsVaJHdM1-8u8GTOVaXXlPpmLAx2ZThwSCPrE",
-    );
+    setAuthToken(token);
     const externalId = localStorage.getItem("externalId") ?? "";
     setFormData((prev) => ({ ...prev, userExternalId: externalId }));
   }, []);
@@ -58,7 +55,7 @@ export default function CreateCameraDialog() {
         name: "",
         description: "",
         url: "",
-        locationId: "",
+        locationExternalId: "",
         position: "entry",
         status: true,
         userExternalId: authToken,
@@ -155,11 +152,11 @@ export default function CreateCameraDialog() {
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="locationId">Ubicación</Label>
+            <Label htmlFor="locationExternalId">Ubicación</Label>
             <select
-              id="locationId"
-              name="locationId"
-              value={formData.locationId}
+              id="locationExternalId"
+              name="locationExternalId"
+              value={formData.locationExternalId}
               onChange={handleChange}
               required
               className="rounded-md border p-2"

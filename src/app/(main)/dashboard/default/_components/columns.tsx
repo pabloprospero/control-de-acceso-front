@@ -13,16 +13,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 import { DataTableColumnHeader } from "../../../../../components/data-table/data-table-column-header";
 
-import { sectionSchema } from "./schema";
+import { eventsResponseSchema } from "./schema";
 import { TableCellViewer } from "./table-cell-viewer";
 
-export const dashboardColumns: ColumnDef<z.infer<typeof sectionSchema>>[] = [
+export const dashboardColumns: ColumnDef<any>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -47,124 +45,58 @@ export const dashboardColumns: ColumnDef<z.infer<typeof sectionSchema>>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "header",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Header" />,
-    cell: ({ row }) => {
-      return <TableCellViewer item={row.original} />;
-    },
-    enableSorting: false,
+    accessorKey: "id",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
+  },
+  {
+    accessorKey: "documentType",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Tipo Doc." />,
+  },
+  {
+    accessorKey: "documentNumber",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Nro Documento" />,
+  },
+  {
+    accessorKey: "firstName",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Nombre" />,
+  },
+  {
+    accessorKey: "lastName",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Apellido" />,
   },
   {
     accessorKey: "type",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Section Type" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Tipo" />,
     cell: ({ row }) => (
-      <div className="w-32">
-        <Badge variant="outline" className="text-muted-foreground px-1.5">
-          {row.original.type}
-        </Badge>
-      </div>
-    ),
-    enableSorting: false,
-  },
-  {
-    accessorKey: "status",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
-    cell: ({ row }) => (
-      <Badge variant="outline" className="text-muted-foreground px-1.5">
-        {row.original.status === "Done" ? (
-          <CircleCheck className="stroke-border fill-green-500 dark:fill-green-400" />
-        ) : (
-          <Loader />
-        )}
-        {row.original.status}
+      <Badge variant="outline" className="text-muted-foreground px-1.5 capitalize">
+        {row.original.type === "entry" ? "Ingreso" : "Egreso"}
       </Badge>
     ),
-    enableSorting: false,
   },
   {
-    accessorKey: "target",
-    header: ({ column }) => <DataTableColumnHeader className="w-full text-right" column={column} title="Target" />,
+    accessorKey: "photoPath",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Foto" />,
     cell: ({ row }) => (
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
-            loading: `Saving ${row.original.header}`,
-            success: "Done",
-            error: "Error",
-          });
-        }}
-      >
-        <Label htmlFor={`${row.original.id}-target`} className="sr-only">
-          Target
-        </Label>
-        <Input
-          className="hover:bg-input/30 focus-visible:bg-background dark:hover:bg-input/30 dark:focus-visible:bg-input/30 h-8 w-16 border-transparent bg-transparent text-right shadow-none focus-visible:border dark:bg-transparent"
-          defaultValue={row.original.target}
-          id={`${row.original.id}-target`}
-        />
-      </form>
+      <div className="h-16 w-16">
+        {row.original.photoPath ? (
+          <img src={row.original.photoPath} alt="Foto" className="h-full w-full rounded-md object-cover" />
+        ) : (
+          <span className="text-gray-400">Sin foto</span>
+        )}
+      </div>
     ),
-    enableSorting: false,
   },
   {
-    accessorKey: "limit",
-    header: ({ column }) => <DataTableColumnHeader className="w-full text-right" column={column} title="Limit" />,
-    cell: ({ row }) => (
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
-            loading: `Saving ${row.original.header}`,
-            success: "Done",
-            error: "Error",
-          });
-        }}
-      >
-        <Label htmlFor={`${row.original.id}-limit`} className="sr-only">
-          Limit
-        </Label>
-        <Input
-          className="hover:bg-input/30 focus-visible:bg-background dark:hover:bg-input/30 dark:focus-visible:bg-input/30 h-8 w-16 border-transparent bg-transparent text-right shadow-none focus-visible:border dark:bg-transparent"
-          defaultValue={row.original.limit}
-          id={`${row.original.id}-limit`}
-        />
-      </form>
-    ),
-    enableSorting: false,
-  },
-  {
-    accessorKey: "reviewer",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Reviewer" />,
+    accessorKey: "createdAt",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Fecha" />,
     cell: ({ row }) => {
-      const isAssigned = row.original.reviewer !== "Assign reviewer";
-
-      if (isAssigned) {
-        return row.original.reviewer;
-      }
-
+      const fecha = new Date(row.original.createdAt).toLocaleString();
       return (
-        <>
-          <Label htmlFor={`${row.original.id}-reviewer`} className="sr-only">
-            Reviewer
-          </Label>
-          <Select>
-            <SelectTrigger
-              className="w-38 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate"
-              size="sm"
-              id={`${row.original.id}-reviewer`}
-            >
-              <SelectValue placeholder="Assign reviewer" />
-            </SelectTrigger>
-            <SelectContent align="end">
-              <SelectItem value="Eddie Lake">Eddie Lake</SelectItem>
-              <SelectItem value="Jamik Tashpulatov">Jamik Tashpulatov</SelectItem>
-            </SelectContent>
-          </Select>
-        </>
+        <Badge variant="outline" className="text-muted-foreground px-1.5">
+          {fecha}
+        </Badge>
       );
     },
-    enableSorting: false,
   },
   {
     id: "actions",
@@ -173,15 +105,14 @@ export const dashboardColumns: ColumnDef<z.infer<typeof sectionSchema>>[] = [
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="data-[state=open]:bg-muted text-muted-foreground flex size-8" size="icon">
             <EllipsisVertical />
-            <span className="sr-only">Open menu</span>
+            <span className="sr-only">Acción</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-32">
-          <DropdownMenuItem>Edit</DropdownMenuItem>
-          <DropdownMenuItem>Make a copy</DropdownMenuItem>
-          <DropdownMenuItem>Favorite</DropdownMenuItem>
+          <DropdownMenuItem>Editar</DropdownMenuItem>
+          <DropdownMenuItem>Ver</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+          <DropdownMenuItem className="text-red-600">Eliminar</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     ),

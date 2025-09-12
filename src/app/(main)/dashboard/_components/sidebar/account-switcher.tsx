@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-
+import { useRouter } from "next/navigation"; // 👈 para redirigir
 import { BadgeCheck, Bell, CreditCard, LogOut } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -27,6 +27,22 @@ export function AccountSwitcher({
   }>;
 }) {
   const [activeUser, setActiveUser] = useState(users[0]);
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      // 🔹 Si usás token en localStorage
+      localStorage.removeItem("auth_token");
+
+      // 🔹 Si necesitás cerrar sesión en backend (ej: Laravel Sanctum)
+      // await fetch("http://tu-api.test/logout", { method: "POST", credentials: "include" });
+
+      // 🔹 Redirige al login
+      router.push("/auth/v1/login");
+    } catch (error) {
+      console.error("Error en logout:", error);
+    }
+  };
 
   return (
     <DropdownMenu>
@@ -71,7 +87,7 @@ export function AccountSwitcher({
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600">
           <LogOut />
           Log out
         </DropdownMenuItem>

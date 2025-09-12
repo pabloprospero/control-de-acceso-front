@@ -45,7 +45,7 @@ export function LoginForm() {
       const result = await res.json();
 
       if (!res.ok) {
-        toast.error(result.message ?? "Invalid credentials");
+        toast.error(result.message || "Invalid credentials");
         setLoading(false);
         return;
       }
@@ -53,7 +53,6 @@ export function LoginForm() {
       // guardar token e info del usuario
       localStorage.setItem("token", result.token);
       localStorage.setItem("user", JSON.stringify(result.user));
-      localStorage.setItem("externalId", result.externalId);
 
       toast.success("Login successful!");
 

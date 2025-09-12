@@ -21,10 +21,7 @@ export default function Page() {
 
   useEffect(() => {
     const token = localStorage.getItem("token") ?? "";
-    // setAuthToken(token);
-    setAuthToken(
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHRlcm5hbElkIjoiYzcyMDc0NTUtMmZkMC00ZjliLTgxNjYtYzAxZGRkOGZiOTQyIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzU3Njk0MTQ3LCJleHAiOjE3NTc3MjI5NDd9.EfAn1SVsVaJHdM1-8u8GTOVaXXlPpmLAx2ZThwSCPrE",
-    );
+    setAuthToken(token);
   }, []);
 
   useEffect(() => {
