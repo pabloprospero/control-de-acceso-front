@@ -70,7 +70,7 @@ export default function CreateCameraDialog() {
     setFormData({ ...formData, status: value });
   };
 
-  const [locations, setLocations] = useState<{ id: string; name: string }[]>([]);
+  const [locations, setLocations] = useState<{ id: string; externalId: string; name: string }[]>([]);
 
   useEffect(() => {
     if (!authToken) return;
@@ -163,7 +163,7 @@ export default function CreateCameraDialog() {
             >
               <option value="">Selecciona ubicación</option>
               {locations.map((loc) => (
-                <option key={loc.id} value={loc.id}>
+                <option key={loc.externalId} value={loc.externalId}>
                   {loc.name}
                 </option>
               ))}
