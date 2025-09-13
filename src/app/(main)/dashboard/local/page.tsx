@@ -20,15 +20,11 @@ export default function Page() {
       try {
         const token = localStorage.getItem("token");
 
-        const res = await fetch("http://localhost:3000/api/locations", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/locations`, {
+          credentials: "include",
         });
 
         const json = await res.json();
-        console.log("👉 JSON recibido:", json);
-
         const parsed = locationsResponseSchema.safeParse(json);
 
         if (parsed.success) {
@@ -47,14 +43,14 @@ export default function Page() {
   }, []);
 
   if (loading) {
-    return <p className="text-gray-500">Cargando locales...</p>;
+    return <p className="text-gray-500">Cargando ubicaciones...</p>;
   }
 
   return (
     <div className="@container/main flex flex-col gap-4 md:gap-6">
       <div className="flex items-center justify-between">
-        <div className="@card-title leading-none font-semibold">Localizaciones</div>
-        <Button onClick={() => router.push("/dashboard/local/nuevo")}>Nuevo Local</Button>
+        <div className="@card-title leading-none font-semibold">Ubicaciones</div>
+        <Button onClick={() => router.push("/dashboard/local/nuevo")}>Nueva ubicación</Button>
       </div>
 
       <DataTable data={data} />

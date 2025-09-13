@@ -6,6 +6,7 @@ import { Dialog } from "@/components/ui/dialog";
 
 import CreateCameraDialog from "./_components/camera-dialog";
 import { TableCards } from "./_components/table-cards";
+import { CardTitle } from "@/components/ui/card";
 
 interface Camara {
   externalId: string;
@@ -29,8 +30,8 @@ export default function Page() {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cameras`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer " + authToken,
         },
+        credentials: "include",
       });
       if (!response.ok) {
         throw new Error(`Error ${response.status}`);
@@ -44,13 +45,15 @@ export default function Page() {
   };
 
   useEffect(() => {
-    if (!authToken) return;
     fetchCamaras();
   }, [authToken]);
 
   return (
     <div>
-      <CreateCameraDialog fetchData={fetchCamaras} />
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+        <CardTitle>Cámaras</CardTitle>
+        <CreateCameraDialog fetchData={fetchCamaras} />
+      </div>
       <div className="flex flex-col gap-4 md:gap-6">
         <TableCards camaras={camaras} />
       </div>

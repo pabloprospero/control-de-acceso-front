@@ -24,7 +24,6 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof location
     columns,
     getRowId: (row) => row.externalId.toString(),
   });
-
   return (
     <Tabs defaultValue="outline" className="w-full flex-col justify-start gap-6">
       <div className="flex items-center justify-between">

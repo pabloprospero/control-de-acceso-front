@@ -17,6 +17,7 @@ import { sidebarItems } from "@/navigation/sidebar/sidebar-items";
 
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
+import { useEffect, useState } from "react";
 
 const data = {
   navSecondary: [
@@ -55,7 +56,28 @@ const data = {
   ],
 };
 
+interface User {
+  readonly id: string;
+  readonly name: string;
+  readonly email: string;
+  readonly avatar: string;
+  readonly role: string;
+}
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [activeUser, setActiveUser] = useState<User>({} as User);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      console.log(parsedUser);
+      setActiveUser(() => {
+        return { ...parsedUser, name: parsedUser.firstName };
+      });
+    }
+  }, []);
+
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -76,7 +98,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={rootUser} />
+        <NavUser user={activeUser} />
       </SidebarFooter>
     </Sidebar>
   );

@@ -27,8 +27,8 @@ export default function CreateCameraDialog({ fetchData }) {
   useEffect(() => {
     const token = localStorage.getItem("token") ?? "";
     setAuthToken(token);
-    const externalId = localStorage.getItem("externalId") ?? "";
-    setFormData((prev) => ({ ...prev, userExternalId: externalId }));
+    const user = localStorage.getItem("user") ?? "";
+    setFormData((prev) => ({ ...prev, userExternalId: JSON.parse(user).externalId }));
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,12 +46,12 @@ export default function CreateCameraDialog({ fetchData }) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer " + authToken,
         },
+        credentials: "include",
         body: JSON.stringify(formData),
       });
       if (!res.ok) throw new Error("Error al crear cámara");
-      alert("Cámara creada con éxito ✅");
+      alert("Cámara creada con éxito");
       setFormData({
         name: "",
         description: "",
@@ -65,7 +65,7 @@ export default function CreateCameraDialog({ fetchData }) {
       fetchData();
     } catch (error) {
       console.error(error);
-      alert("Hubo un error al crear la cámara ❌");
+      alert("Hubo un error al crear la cámara");
     }
   };
 
@@ -80,8 +80,8 @@ export default function CreateCameraDialog({ fetchData }) {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/locations`, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + authToken,
       },
+      credentials: "include",
     })
       .then((res) => res.json())
       .then((data) => setLocations(data));
@@ -90,7 +90,7 @@ export default function CreateCameraDialog({ fetchData }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>Nueva Cámara</Button>
+        <Button style={{ marginBottom: "1rem" }}>Nueva Cámara</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

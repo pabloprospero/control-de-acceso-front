@@ -22,7 +22,6 @@ export function TableCards(props) {
     <div className="grid grid-cols-1 gap-4 *:data-[slot=card]:shadow-xs">
       <Card>
         <CardHeader>
-          <CardTitle>Cámaras</CardTitle>
           <CardAction>
             <div className="flex items-center gap-2">
               <DataTableViewOptions table={table} />
