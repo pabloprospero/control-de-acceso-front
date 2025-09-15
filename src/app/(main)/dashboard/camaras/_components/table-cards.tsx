@@ -9,13 +9,22 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardAction } from "@/components/ui/card";
 import { useDataTableInstance } from "@/hooks/use-data-table-instance";
 
+import { z } from "zod";
+import { recentLeadSchema } from "./schema";
 import { recentLeadsColumns } from "./columns.crm";
+import { Camara } from "../page";
 
-export function TableCards(props) {
+type RecentLead = z.infer<typeof recentLeadSchema>;
+
+type TableCardsProps = {
+  camaras: Camara[];
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function TableCards(props: { camaras?: any }) {
   const table = useDataTableInstance({
     data: props.camaras,
-    columns: recentLeadsColumns,
-    getRowId: (row) => row.id.toString(),
+    columns: recentLeadsColumns, // 👈 usar columnas
   });
 
   return (
@@ -34,7 +43,7 @@ export function TableCards(props) {
         </CardHeader>
         <CardContent className="flex size-full flex-col gap-4">
           <div className="overflow-hidden rounded-md border">
-            <DataTable table={table} columns={recentLeadsColumns} />
+            <DataTable table={table} columns={recentLeadsColumns} /> {/* 👈 columnas correctas */}
           </div>
           <DataTablePagination table={table} />
         </CardContent>

@@ -8,7 +8,7 @@ import CreateCameraDialog from "./_components/camera-dialog";
 import { TableCards } from "./_components/table-cards";
 import { CardTitle } from "@/components/ui/card";
 
-interface Camara {
+export interface Camara {
   externalId: string;
   url: string;
   description?: string;

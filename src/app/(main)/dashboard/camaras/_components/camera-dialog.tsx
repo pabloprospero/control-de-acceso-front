@@ -10,7 +10,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Toggle } from "@/components/ui/toggle";
 
-export default function CreateCameraDialog({ fetchData }) {
+type CreateCameraDialogProps = {
+  fetchData: () => Promise<void>; // o ajustalo según lo que devuelva tu función
+};
+
+export default function CreateCameraDialog({ fetchData }: CreateCameraDialogProps) {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -31,11 +35,12 @@ export default function CreateCameraDialog({ fetchData }) {
     setFormData((prev) => ({ ...prev, userExternalId: JSON.parse(user).externalId }));
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
