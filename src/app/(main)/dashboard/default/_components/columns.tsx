@@ -18,7 +18,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DataTableColumnHeader } from "../../../../../components/data-table/data-table-column-header";
 
 import { eventsResponseSchema } from "./schema";
-import { TableCellViewer } from "./table-cell-viewer";
 
 export const dashboardColumns: ColumnDef<any>[] = [
   {

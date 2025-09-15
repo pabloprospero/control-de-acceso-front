@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import * as React from "react";
@@ -17,7 +18,7 @@ import { withDndColumn } from "../../../../../components/data-table/table-utils"
 import { dashboardColumns } from "./columns";
 import { eventsResponseSchema } from "./schema";
 
-export function DataTable({ data: initialData }: { data: z.infer<typeof eventsResponseSchema>[] }) {
+export function DataTable({ data: initialData }: { data: any[] }) {
   const [data, setData] = React.useState(() => initialData);
   const columns = withDndColumn(dashboardColumns);
   const table = useDataTableInstance({ data, columns, getRowId: (row) => row.id.toString() });
