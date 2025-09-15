@@ -4,19 +4,18 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 import { DataTable } from "./_components/data-table";
 import { eventsResponseSchema, eventSchema } from "./_components/schema";
+import { useAuth } from "@/app/hooks/useAuth";
 
 type EventType = z.infer<typeof eventSchema>;
 
 export default function Page() {
   const [data, setData] = useState<EventType[]>([]);
 
-  const [loading, setLoading] = useState(true);
+  const [loadingEvents, setLoadingEvents] = useState(true);
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const token = localStorage.getItem("token"); // o de donde lo guardes después del login
-
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events`, {
           credentials: "include",
         });
@@ -27,7 +26,6 @@ export default function Page() {
         const parsed = eventsResponseSchema.safeParse(json);
 
         if (parsed.success) {
-          // ahora los eventos están en parsed.data.events
           setData(parsed.data.events);
         } else {
           console.error("❌ Error validando datos", parsed.error);
@@ -35,14 +33,18 @@ export default function Page() {
       } catch (error) {
         console.error("❌ Error en fetch", error);
       } finally {
-        setLoading(false);
+        setLoadingEvents(false);
       }
     };
 
     fetchEvents();
   }, []);
 
-  if (loading) {
+  const { loading } = useAuth();
+
+  if (loading) return <div>Cargando...</div>;
+
+  if (loadingEvents) {
     return <p className="text-gray-500">Cargando eventos...</p>;
   }
 

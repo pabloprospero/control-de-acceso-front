@@ -7,6 +7,7 @@ import { Dialog } from "@/components/ui/dialog";
 import CreateCameraDialog from "./_components/camera-dialog";
 import { TableCards } from "./_components/table-cards";
 import { CardTitle } from "@/components/ui/card";
+import { useAuth } from "@/app/hooks/useAuth";
 
 export interface Camara {
   externalId: string;
@@ -18,12 +19,7 @@ export interface Camara {
 
 export default function Page() {
   const [camaras, setCamaras] = useState<Camara[]>([]);
-  const [authToken, setAuthToken] = useState<string | null>(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token") ?? "";
-    setAuthToken(token);
-  }, []);
+  const { loading } = useAuth();
 
   const fetchCamaras = async () => {
     try {
@@ -46,7 +42,9 @@ export default function Page() {
 
   useEffect(() => {
     fetchCamaras();
-  }, [authToken]);
+  }, []);
+
+  if (loading) return <div>Cargando...</div>;
 
   return (
     <div>

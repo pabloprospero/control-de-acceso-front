@@ -7,13 +7,15 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "./_components/data-table";
 import { locationsResponseSchema } from "./_components/schema";
+import { useAuth } from "@/app/hooks/useAuth";
 
 type LocationType = z.infer<typeof locationsResponseSchema>[number];
 
 export default function Page() {
   const [data, setData] = useState<LocationType[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingLocations, setLoadingLocations] = useState(true);
   const router = useRouter();
+  const { loading } = useAuth();
 
   useEffect(() => {
     const fetchLocations = async () => {
@@ -35,14 +37,16 @@ export default function Page() {
       } catch (error) {
         console.error("❌ Error en fetch", error);
       } finally {
-        setLoading(false);
+        setLoadingLocations(false);
       }
     };
 
     fetchLocations();
   }, []);
 
-  if (loading) {
+  if (loading) return <div>Cargando...</div>;
+
+  if (loadingLocations) {
     return <p className="text-gray-500">Cargando ubicaciones...</p>;
   }
 
