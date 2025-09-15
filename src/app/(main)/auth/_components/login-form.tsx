@@ -10,10 +10,11 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
 
 const FormSchema = z.object({
   username: z.string(),
-  password: z.string().min(6, { message: "Password must be at least 6 characters." }),
+  password: z.string().min(6, { message: "La contraseña debe tener al menos 6 caracteres." }),
   remember: z.boolean().optional(),
 });
 
@@ -29,38 +30,38 @@ export function LoginForm() {
     },
   });
 
+  const router = useRouter();
+
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:3000/api/users/login", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username: data.username,
           password: data.password,
         }),
+        credentials: "include",
       });
 
       const result = await res.json();
 
       if (!res.ok) {
-        toast.error(result.message ?? "Invalid credentials");
+        toast.error(result.message ?? "Credenciales inválidas");
         setLoading(false);
         return;
       }
 
-      // guardar token e info del usuario
-      localStorage.setItem("token", result.token);
-      localStorage.setItem("user", JSON.stringify(result.user));
-      localStorage.setItem("externalId", result.externalId);
+      localStorage.setItem("user", JSON.stringify(result));
 
-      toast.success("Login successful!");
+      toast.success("¡Inicio de sesión exitoso!");
 
-      // redirigir al dashboard (ajustá la ruta si querés otra)
-      window.location.href = "/dashboard/default";
+      // redirigir al dashboard
+      router.push("/dashboard/default");
     } catch (err) {
-      toast.error("Something went wrong. Try again later.");
+      toast.error("Hubo un error. Inténtalo de nuevo más tarde.");
     } finally {
       setLoading(false);
     }
@@ -74,9 +75,9 @@ export function LoginForm() {
           name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>User</FormLabel>
+              <FormLabel>Usuario</FormLabel>
               <FormControl>
-                <Input id="username" type="text" placeholder="User" autoComplete="username" {...field} />
+                <Input id="username" type="text" placeholder="Usuario" autoComplete="username" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -88,7 +89,7 @@ export function LoginForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>Contraseña</FormLabel>
               <FormControl>
                 <Input
                   id="password"
@@ -103,7 +104,7 @@ export function LoginForm() {
           )}
         />
 
-        <FormField
+        {/* <FormField
           control={form.control}
           name="remember"
           render={({ field }) => (
@@ -121,10 +122,10 @@ export function LoginForm() {
               </FormLabel>
             </FormItem>
           )}
-        />
+        /> */}
 
         <Button className="w-full" type="submit" disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
+          {loading ? "Iniciando sesión..." : "Iniciar sesión"}
         </Button>
       </form>
     </Form>

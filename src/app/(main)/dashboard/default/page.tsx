@@ -18,9 +18,7 @@ export default function Page() {
         const token = localStorage.getItem("token"); // o de donde lo guardes después del login
 
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/events`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          credentials: "include",
         });
 
         const json = await res.json();

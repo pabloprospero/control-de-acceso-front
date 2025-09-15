@@ -6,6 +6,7 @@ import { Dialog } from "@/components/ui/dialog";
 
 import CreateCameraDialog from "./_components/camera-dialog";
 import { TableCards } from "./_components/table-cards";
+import { CardTitle } from "@/components/ui/card";
 
 interface Camara {
   externalId: string;
@@ -17,40 +18,42 @@ interface Camara {
 
 export default function Page() {
   const [camaras, setCamaras] = useState<Camara[]>([]);
-  const [authToken, setAuthToken] = useState<string | string>("");
+  const [authToken, setAuthToken] = useState<string | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token") ?? "";
     setAuthToken(token);
   }, []);
 
-  useEffect(() => {
-    if (!authToken) return;
-    const fetchCamaras = async () => {
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cameras`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + authToken,
-          },
-        });
-        if (!response.ok) {
-          throw new Error(`Error ${response.status}`);
-        }
-
-        const data = await response.json();
-        setCamaras(data);
-      } catch (error) {
-        console.error("Error fetching camaras:", error);
+  const fetchCamaras = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cameras`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}`);
       }
-    };
 
+      const data = await response.json();
+      setCamaras(data);
+    } catch (error) {
+      console.error("Error fetching camaras:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchCamaras();
   }, [authToken]);
 
   return (
     <div>
-      <CreateCameraDialog />
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+        <CardTitle>Cámaras</CardTitle>
+        <CreateCameraDialog fetchData={fetchCamaras} />
+      </div>
       <div className="flex flex-col gap-4 md:gap-6">
         <TableCards camaras={camaras} />
       </div>

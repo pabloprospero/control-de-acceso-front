@@ -33,7 +33,7 @@ export function LoginForm() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:3000/api/users/login", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -52,11 +52,11 @@ export function LoginForm() {
 
       // guardar token e info del usuario
       localStorage.setItem("token", result.token);
-      localStorage.setItem("user", JSON.stringify(result.user));
+      localStorage.setItem("user", JSON.stringify(result));
 
       toast.success("Login successful!");
 
-      // redirigir al dashboard (ajustá la ruta si querés otra)
+      // redirigir al dashboard
       window.location.href = "/dashboard/default";
     } catch (err) {
       toast.error("Something went wrong. Try again later.");

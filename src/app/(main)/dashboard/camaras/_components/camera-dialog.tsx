@@ -10,7 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Toggle } from "@/components/ui/toggle";
 
-export default function CreateCameraDialog() {
+export default function CreateCameraDialog({ fetchData }) {
+  const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -21,13 +22,13 @@ export default function CreateCameraDialog() {
     userExternalId: "",
   });
 
-  const [authToken, setAuthToken] = useState<string | string>("");
+  const [authToken, setAuthToken] = useState<string | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token") ?? "";
     setAuthToken(token);
-    const externalId = localStorage.getItem("externalId") ?? "";
-    setFormData((prev) => ({ ...prev, userExternalId: externalId }));
+    const user = localStorage.getItem("user") ?? "";
+    setFormData((prev) => ({ ...prev, userExternalId: JSON.parse(user).externalId }));
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,12 +46,12 @@ export default function CreateCameraDialog() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer " + authToken,
         },
+        credentials: "include",
         body: JSON.stringify(formData),
       });
       if (!res.ok) throw new Error("Error al crear cámara");
-      alert("Cámara creada con éxito ✅");
+      alert("Cámara creada con éxito");
       setFormData({
         name: "",
         description: "",
@@ -58,11 +59,13 @@ export default function CreateCameraDialog() {
         locationExternalId: "",
         position: "entry",
         status: true,
-        userExternalId: authToken,
+        userExternalId: "",
       });
+      setOpen(false);
+      fetchData();
     } catch (error) {
       console.error(error);
-      alert("Hubo un error al crear la cámara ❌");
+      alert("Hubo un error al crear la cámara");
     }
   };
 
@@ -70,24 +73,24 @@ export default function CreateCameraDialog() {
     setFormData({ ...formData, status: value });
   };
 
-  const [locations, setLocations] = useState<{ id: string; externalId: string; name: string }[]>([]);
+  const [locations, setLocations] = useState<{ externalId: string; name: string }[]>([]);
 
   useEffect(() => {
     if (!authToken) return;
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/locations`, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + authToken,
       },
+      credentials: "include",
     })
       .then((res) => res.json())
       .then((data) => setLocations(data));
   }, [authToken]);
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>Nueva Cámara</Button>
+        <Button style={{ marginBottom: "1rem" }}>Nueva Cámara</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

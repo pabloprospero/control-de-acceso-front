@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation"; // 👈 para redirigir
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { BadgeCheck, Bell, CreditCard, LogOut } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -14,33 +14,44 @@ import {
   DropdownMenuGroup,
 } from "@/components/ui/dropdown-menu";
 import { cn, getInitials } from "@/lib/utils";
+import { toast } from "sonner";
 
-export function AccountSwitcher({
-  users,
-}: {
-  readonly users: ReadonlyArray<{
-    readonly id: string;
-    readonly name: string;
-    readonly email: string;
-    readonly avatar: string;
-    readonly role: string;
-  }>;
-}) {
-  const [activeUser, setActiveUser] = useState(users[0]);
+interface User {
+  readonly id: string;
+  readonly name: string;
+  readonly email: string;
+  readonly avatar: string;
+  readonly role: string;
+}
+export function AccountSwitcher() {
+  const [activeUser, setActiveUser] = useState<User>({} as User);
   const router = useRouter();
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      console.log(parsedUser);
+      setActiveUser(() => {
+        return { ...parsedUser, name: parsedUser.firstName };
+      });
+    }
+  }, []);
 
   const handleLogout = async () => {
     try {
-      // 🔹 Si usás token en localStorage
-      localStorage.removeItem("auth_token");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
 
-      // 🔹 Si necesitás cerrar sesión en backend (ej: Laravel Sanctum)
-      // await fetch("http://tu-api.test/logout", { method: "POST", credentials: "include" });
+      if (!res.ok) throw new Error("Failed to logout");
 
-      // 🔹 Redirige al login
+      localStorage.removeItem("user");
+      toast.success("Sesión cerrada con éxito");
       router.push("/auth/v1/login");
-    } catch (error) {
-      console.error("Error en logout:", error);
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -48,48 +59,30 @@ export function AccountSwitcher({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Avatar className="size-9 rounded-lg">
-          <AvatarImage src={activeUser.avatar || undefined} alt={activeUser.name} />
+          <AvatarImage src={""} alt={activeUser.name} />
           <AvatarFallback className="rounded-lg">{getInitials(activeUser.name)}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="min-w-56 space-y-1 rounded-lg" side="bottom" align="end" sideOffset={4}>
-        {users.map((user) => (
-          <DropdownMenuItem
-            key={user.email}
-            className={cn("p-0", user.id === activeUser.id && "bg-accent/50 border-l-primary border-l-2")}
-            onClick={() => setActiveUser(user)}
-          >
-            <div className="flex w-full items-center justify-between gap-2 px-1 py-1.5">
-              <Avatar className="size-9 rounded-lg">
-                <AvatarImage src={user.avatar || undefined} alt={user.name} />
-                <AvatarFallback className="rounded-lg">{getInitials(user.name)}</AvatarFallback>
-              </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{user.name}</span>
-                <span className="truncate text-xs capitalize">{user.role}</span>
-              </div>
-            </div>
-          </DropdownMenuItem>
-        ))}
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem>
             <BadgeCheck />
-            Account
+            Mi cuenta
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          {/* <DropdownMenuItem>
             <CreditCard />
             Billing
           </DropdownMenuItem>
           <DropdownMenuItem>
             <Bell />
             Notifications
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600">
           <LogOut />
-          Log out
+          Cerrar sesión
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

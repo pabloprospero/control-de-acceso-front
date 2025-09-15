@@ -8,10 +8,6 @@ export type LocationType = z.infer<typeof locationsResponseSchema>[number];
 
 export const dashboardColumns: ColumnDef<LocationType>[] = [
   {
-    accessorKey: "externalId",
-    header: "ID Externo",
-  },
-  {
     accessorKey: "name",
     header: "Nombre",
   },
