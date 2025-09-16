@@ -1,6 +1,6 @@
 import z from "zod";
 
-export const recentLeadSchema = z.object({
+export const cameraSchema = z.object({
   id: z.string(),
   description: z.string(),
   url: z.string(),
@@ -11,4 +11,5 @@ export const recentLeadSchema = z.object({
   }),
   status: z.string(),
   name: z.string(),
+  externalId: z.string(),
 });

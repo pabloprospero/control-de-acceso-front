@@ -1,44 +1,15 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { EllipsisVertical } from "lucide-react";
+import { Edit, EllipsisVertical, Trash2 } from "lucide-react";
 import z from "zod";
+import { toast } from "sonner";
 
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { recentLeadSchema } from "./schema";
+import { cameraSchema } from "./schema";
+import { useRouter } from "next/navigation"; // si estás con App Router
 
-export const recentLeadsColumns: ColumnDef<z.infer<typeof recentLeadSchema>>[] = [
-  // {
-  //   id: "select",
-  //   header: ({ table }) => (
-  //     <div className="flex items-center justify-center">
-  //       <Checkbox
-  //         checked={table.getIsAllPageRowsSelected()}
-  //         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-  //         aria-label="Select all"
-  //       />
-  //     </div>
-  //   ),
-  //   cell: ({ row }) => (
-  //     <div className="flex items-center justify-center">
-  //       <Checkbox
-  //         checked={row.getIsSelected()}
-  //         onCheckedChange={(value) => row.toggleSelected(!!value)}
-  //         aria-label="Select row"
-  //       />
-  //     </div>
-  //   ),
-  //   enableSorting: false,
-  //   enableHiding: false,
-  // },
-  // {
-  //   accessorKey: "id",
-  //   header: ({ column }) => <DataTableColumnHeader column={column} title="Ref" />,
-  //   cell: ({ row }) => <span className="tabular-nums">{row.original.externalId}</span>,
-  //   enableSorting: false,
-  //   enableHiding: false,
-  // },
+export const cameraColumns: ColumnDef<z.infer<typeof cameraSchema>>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Nombre" />,
@@ -54,7 +25,17 @@ export const recentLeadsColumns: ColumnDef<z.infer<typeof recentLeadSchema>>[] =
   {
     accessorKey: "url",
     header: ({ column }) => <DataTableColumnHeader column={column} title="URL" />,
-    cell: ({ row }) => <span>{row.original.url}</span>,
+    cell: ({ row }) => {
+      const url = row.original.url;
+      if (!url) return null;
+      if (url.length <= 15) return url;
+
+      const showLength = 15;
+      const start = url.slice(0, showLength);
+      const end = url.slice(-showLength + 5);
+
+      return <span>{`${start}......${end}`}</span>;
+    },
     enableHiding: false,
   },
   {
@@ -77,12 +58,44 @@ export const recentLeadsColumns: ColumnDef<z.infer<typeof recentLeadSchema>>[] =
   },
   {
     id: "actions",
-    cell: () => (
-      <Button variant="ghost" className="text-muted-foreground flex size-8" size="icon">
-        <EllipsisVertical />
-        <span className="sr-only">Open menu</span>
-      </Button>
-    ),
-    enableSorting: false,
+    cell: ({ row }) => {
+      const router = useRouter();
+
+      const handleEdit = () => {
+        // Cambia la URL incluyendo el externalId
+        router.push(`/dashboard/camaras/edit/${row.original.externalId}`);
+      };
+
+      const handleDelete = () => {};
+
+      return (
+        <div className="flex gap-2">
+          <Button variant="ghost" size="icon" onClick={handleEdit}>
+            <Edit />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              if (confirm(`¿Eliminar cámara "${row.original.name}"?`)) {
+                fetch(`${process.env.NEXT_PUBLIC_API_URL}/cameras/${row.original.externalId}`, {
+                  method: "DELETE",
+                  credentials: "include",
+                })
+                  .then(() => {
+                    toast.success("Cámara eliminada");
+                    window.location.reload();
+                  })
+                  .catch(() => toast.error("Error al eliminar"));
+              }
+            }}
+          >
+            <Trash2 />
+          </Button>
+        </div>
+      );
+    },
+
+    header: () => <span>Acciones</span>,
   },
 ];

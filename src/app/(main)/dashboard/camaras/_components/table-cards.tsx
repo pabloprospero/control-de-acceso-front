@@ -10,11 +10,11 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardAction }
 import { useDataTableInstance } from "@/hooks/use-data-table-instance";
 
 import { z } from "zod";
-import { recentLeadSchema } from "./schema";
-import { recentLeadsColumns } from "./columns.crm";
+import { cameraSchema } from "./schema";
+import { cameraColumns } from "./columns.crm";
 import { Camara } from "../page";
 
-type RecentLead = z.infer<typeof recentLeadSchema>;
+type Camera = z.infer<typeof cameraSchema>;
 
 type TableCardsProps = {
   camaras: Camara[];
@@ -24,8 +24,16 @@ type TableCardsProps = {
 export function TableCards(props: { camaras?: any }) {
   const table = useDataTableInstance({
     data: props.camaras,
-    columns: recentLeadsColumns, // 👈 usar columnas
+    columns: cameraColumns,
   });
+
+  function handleEdit(id: string): void {
+    throw new Error("Function not implemented.");
+  }
+
+  function handleDelete(id: string): void {
+    throw new Error("Function not implemented.");
+  }
 
   return (
     <div className="grid grid-cols-1 gap-4 *:data-[slot=card]:shadow-xs">
@@ -34,16 +42,12 @@ export function TableCards(props: { camaras?: any }) {
           <CardAction>
             <div className="flex items-center gap-2">
               <DataTableViewOptions table={table} />
-              {/* <Button variant="outline" size="sm">
-                <Download />
-                <span className="hidden lg:inline">Export</span>
-              </Button> */}
             </div>
           </CardAction>
         </CardHeader>
         <CardContent className="flex size-full flex-col gap-4">
           <div className="overflow-hidden rounded-md border">
-            <DataTable table={table} columns={recentLeadsColumns} /> {/* 👈 columnas correctas */}
+            <DataTable table={table} columns={cameraColumns} />
           </div>
           <DataTablePagination table={table} />
         </CardContent>
