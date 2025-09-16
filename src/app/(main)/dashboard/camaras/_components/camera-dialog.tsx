@@ -81,7 +81,6 @@ export default function CreateCameraDialog({ fetchData }: CreateCameraDialogProp
   const [locations, setLocations] = useState<{ externalId: string; name: string }[]>([]);
 
   useEffect(() => {
-    if (!authToken) return;
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/locations`, {
       headers: {
         "Content-Type": "application/json",
