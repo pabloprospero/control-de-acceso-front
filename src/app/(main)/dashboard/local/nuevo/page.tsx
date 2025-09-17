@@ -8,7 +8,8 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import React from "react";
+import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 // Esquema de validación con Zod
 const formSchema = z.object({
@@ -19,7 +20,11 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export default function NuevaLocalPage() {
+interface LocationFormPageProps {
+  id?: string;
+}
+
+export default function LocationFormPage(props: LocationFormPageProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -29,27 +34,55 @@ export default function NuevaLocalPage() {
     },
   });
 
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!props.id) return;
+
+    // Fetch de datos de la ubicación
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/locations/${props.id}`, {
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        form.reset({
+          name: data.name,
+          address: data.address,
+          description: data.description,
+        });
+      })
+      .catch(() => toast.error("Error al cargar los datos de la ubicación"));
+  }, [props.id]);
+
   const onSubmit = async (data: FormValues) => {
     try {
-      const token = localStorage.getItem("token");
       const user = localStorage.getItem("user");
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/locations`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+      if (!user) {
+        toast.error("Usuario no encontrado en localStorage");
+        return;
+      }
+
+      const { externalId: userExternalId } = JSON.parse(user);
+
+      const url = props.id
+        ? `${process.env.NEXT_PUBLIC_API_URL}/locations/${props.id}`
+        : `${process.env.NEXT_PUBLIC_API_URL}/locations`;
+
+      const method = props.id ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({
-          ...data,
-          userExternalId: JSON.parse(user ?? "").externalId,
-        }),
+        body: JSON.stringify({ ...data, userExternalId }),
       });
 
       if (!res.ok) throw new Error("Error en la API");
 
-      const response = await res.json();
-      toast.success("Datos guardados correctamente");
+      toast.success(`Ubicación ${props.id ? "actualizada" : "creada"} correctamente`);
       form.reset();
+      router.push("/dashboard/local");
     } catch (error) {
       toast.error("Hubo un problema al guardar los datos");
     }
@@ -57,9 +90,9 @@ export default function NuevaLocalPage() {
 
   return (
     <Form {...form}>
-      <div className="@card-title leading-none font-semibold">Nueva ubicación</div>
+      <div className="@card-title leading-none font-semibold">{props.id ? "Editar ubicación" : "Nueva ubicación"}</div>
       <br />
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" style={{ maxWidth: "400px" }}>
         <FormField
           control={form.control}
           name="name"
@@ -101,9 +134,12 @@ export default function NuevaLocalPage() {
             </FormItem>
           )}
         />
-        <Button className="w-full" type="submit">
-          Guardar
-        </Button>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <Button type="submit">Guardar</Button>
+          <Button variant="secondary" type="button" onClick={() => router.back()}>
+            Cancelar
+          </Button>
+        </div>
       </form>
     </Form>
   );

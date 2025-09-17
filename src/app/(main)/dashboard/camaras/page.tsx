@@ -7,6 +7,7 @@ import { CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/app/hooks/useAuth";
 import CameraDialog from "./_components/camera-dialog";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export interface Camara {
   externalId: string;
@@ -19,8 +20,8 @@ export interface Camara {
 export default function Page() {
   const [camaras, setCamaras] = useState<Camara[]>([]);
   const { loading } = useAuth();
-  const [cameraExternalId, setCameraExternalId] = useState<string | undefined>(undefined);
   const [editOpen, setEditOpen] = useState(false);
+  const router = useRouter();
 
   const fetchCamaras = async () => {
     try {
@@ -51,10 +52,9 @@ export default function Page() {
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
         <CardTitle>Cámaras</CardTitle>
-        <Button style={{ marginBottom: "1rem" }} onClick={() => setEditOpen(true)}>
+        <Button style={{ marginBottom: "1rem" }} onClick={() => router.push("/dashboard/camaras/nuevo")}>
           Nueva Cámara
         </Button>
-        <CameraDialog open={editOpen} onOpenChange={setEditOpen} fetchData={fetchCamaras} />
       </div>
       <div className="flex flex-col gap-4 md:gap-6">
         <TableCards camaras={camaras} />

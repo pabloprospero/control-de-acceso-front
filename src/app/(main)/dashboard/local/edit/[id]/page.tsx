@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import LocationFormPage from "../../nuevo/page";
 import { usePathname } from "next/navigation";
-import CameraFormPage from "../../nuevo/page";
 
-export default function EditCameraPage() {
+export default function LocationPage() {
   const pathname = usePathname();
   const [locationId, setLocationId] = useState<string | null>(null);
 
@@ -13,7 +13,7 @@ export default function EditCameraPage() {
     if (id) setLocationId(id);
   }, [pathname]);
 
-  if (!locationId) return <div>ID de cámara no proporcionado</div>;
+  if (!locationId) return <div>ID de ubicación no proporcionado</div>;
 
-  return <CameraFormPage cameraId={locationId} />;
+  return <LocationFormPage id={locationId}></LocationFormPage>;
 }

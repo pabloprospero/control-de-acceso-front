@@ -7,7 +7,7 @@ import { DataTableColumnHeader } from "@/components/data-table/data-table-column
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cameraSchema } from "./schema";
-import { useRouter } from "next/navigation"; // si estás con App Router
+import { useRouter } from "next/navigation";
 
 export const cameraColumns: ColumnDef<z.infer<typeof cameraSchema>>[] = [
   {
@@ -65,8 +65,6 @@ export const cameraColumns: ColumnDef<z.infer<typeof cameraSchema>>[] = [
         // Cambia la URL incluyendo el externalId
         router.push(`/dashboard/camaras/edit/${row.original.externalId}`);
       };
-
-      const handleDelete = () => {};
 
       return (
         <div className="flex gap-2">
