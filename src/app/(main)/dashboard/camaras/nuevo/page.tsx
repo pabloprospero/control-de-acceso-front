@@ -10,12 +10,11 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-interface CameraFormPageProps {
-  cameraId?: string;
-}
+// interface CameraFormPageProps {
+//   cameraId?: string;
+// }
 
-export default function CameraFormPage({ cameraId }: CameraFormPageProps) {
-  const [selectedCamera, setSelectedCamera] = useState<string | null>(null);
+export default function CameraFormPage({ cameraId }: any) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -63,16 +62,16 @@ export default function CameraFormPage({ cameraId }: CameraFormPageProps) {
         }),
       )
       .finally(() => setLoading(false));
-  }, [selectedCamera]);
+  }, [cameraId]);
 
   // Inicializar userExternalId para creación nueva
   useEffect(() => {
-    if (selectedCamera) return;
+    if (cameraId) return;
     const user = localStorage.getItem("user");
     if (user) {
       setFormData((prev) => ({ ...prev, userExternalId: JSON.parse(user).externalId }));
     }
-  }, [selectedCamera]);
+  }, [cameraId]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -86,10 +85,10 @@ export default function CameraFormPage({ cameraId }: CameraFormPageProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const url = selectedCamera
-        ? `${process.env.NEXT_PUBLIC_API_URL}/cameras/${selectedCamera}`
+      const url = cameraId
+        ? `${process.env.NEXT_PUBLIC_API_URL}/cameras/${cameraId}`
         : `${process.env.NEXT_PUBLIC_API_URL}/cameras`;
-      const method = selectedCamera ? "PUT" : "POST";
+      const method = cameraId ? "PUT" : "POST";
 
       const res = await fetch(url, {
         method,
@@ -100,7 +99,7 @@ export default function CameraFormPage({ cameraId }: CameraFormPageProps) {
 
       if (!res.ok) throw new Error("Error al guardar cámara");
 
-      toast.success(`Cámara ${selectedCamera ? "actualizada" : "creada"} con éxito`);
+      toast.success(`Cámara ${cameraId ? "actualizada" : "creada"} con éxito`);
       setFormData({
         name: "",
         description: "",
@@ -110,6 +109,7 @@ export default function CameraFormPage({ cameraId }: CameraFormPageProps) {
         status: true,
         userExternalId: "",
       });
+      router.push("/dashboard/camaras");
     } catch (err) {
       console.error(err);
       toast.error("Hubo un error al guardar la cámara");
@@ -134,7 +134,7 @@ export default function CameraFormPage({ cameraId }: CameraFormPageProps) {
         body: JSON.stringify({ url: formData.url }),
       });
 
-      if (!res.ok) throw new Error("Error al obtener la vista previa", { id: loadingToast });
+      if (!res.ok) throw new Error("Error al obtener la vista previa");
 
       const blob = await res.blob();
       setPreview(URL.createObjectURL(blob));
@@ -142,7 +142,7 @@ export default function CameraFormPage({ cameraId }: CameraFormPageProps) {
       toast.success("Vista previa generada", { id: loadingToast });
     } catch (error) {
       console.error(error);
-      toast.error("No se pudo generar la vista previa");
+      toast.error("No se pudo generar la vista previa", { id: loadingToast });
     }
   };
 

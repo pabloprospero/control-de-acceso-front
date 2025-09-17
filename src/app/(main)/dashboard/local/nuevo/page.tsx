@@ -20,11 +20,11 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-interface LocationFormPageProps {
-  id?: string;
-}
+// interface LocationFormPageProps {
+//   id?: string;
+// }
 
-export default function LocationFormPage(props: LocationFormPageProps) {
+export default function LocationFormPage(props: any) {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
