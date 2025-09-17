@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Toggle } from "@/components/ui/toggle";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Check, Eye, VideoOff, X } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -15,7 +15,6 @@ interface CameraFormPageProps {
 }
 
 export default function CameraFormPage({ cameraId }: CameraFormPageProps) {
-  const pathname = usePathname();
   const [selectedCamera, setSelectedCamera] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -44,10 +43,10 @@ export default function CameraFormPage({ cameraId }: CameraFormPageProps) {
 
   // Fetch de cámara a editar
   useEffect(() => {
-    if (!selectedCamera) return;
+    if (!cameraId) return;
 
     setLoading(true);
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/cameras/${selectedCamera}`, {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/cameras/${cameraId}`, {
       headers: { "Content-Type": "application/json" },
       credentials: "include",
     })
@@ -120,15 +119,31 @@ export default function CameraFormPage({ cameraId }: CameraFormPageProps) {
   const [preview, setPreview] = useState("");
 
   const handlePreview = async () => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cameras/frame`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ url: formData.url }),
-    });
+    if (!formData.url) {
+      toast.error("Debes ingresar una URL para previsualizar");
+      return;
+    }
 
-    const blob = await res.blob();
-    setPreview(URL.createObjectURL(blob));
+    const loadingToast = toast.loading("Conectando a la cámara...");
+
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cameras/frame`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ url: formData.url }),
+      });
+
+      if (!res.ok) throw new Error("Error al obtener la vista previa", { id: loadingToast });
+
+      const blob = await res.blob();
+      setPreview(URL.createObjectURL(blob));
+
+      toast.success("Vista previa generada", { id: loadingToast });
+    } catch (error) {
+      console.error(error);
+      toast.error("No se pudo generar la vista previa");
+    }
   };
 
   return (
