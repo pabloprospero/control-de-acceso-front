@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Toggle } from "@/components/ui/toggle";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Check, Eye, VideoOff, X } from "lucide-react";
+import { Check, Eye, ImagePlay, VideoOff, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -187,7 +187,7 @@ export default function CameraFormPage({ cameraId }: any) {
                           handlePreview();
                         }}
                       >
-                        <Eye />
+                        <ImagePlay />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>Vista previa</TooltipContent>
