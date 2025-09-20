@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit, EllipsisVertical, Trash2 } from "lucide-react";
+import { Edit, Trash2, Video } from "lucide-react";
 import z from "zod";
 import { toast } from "sonner";
 
@@ -62,18 +62,18 @@ export const cameraColumns: ColumnDef<z.infer<typeof cameraSchema>>[] = [
       const router = useRouter();
 
       const handleEdit = () => {
-        // Cambia la URL incluyendo el externalId
         router.push(`/dashboard/camaras/edit/${row.original.externalId}`);
       };
 
       return (
         <div className="flex gap-2">
-          <Button variant="ghost" size="icon" onClick={handleEdit}>
+          <Button title="Editar" variant="ghost" size="icon" onClick={handleEdit}>
             <Edit />
           </Button>
           <Button
             variant="ghost"
             size="icon"
+            title="Eliminar"
             onClick={() => {
               if (confirm(`¿Eliminar cámara "${row.original.name}"?`)) {
                 fetch(`${process.env.NEXT_PUBLIC_API_URL}/cameras/${row.original.externalId}`, {
@@ -89,6 +89,16 @@ export const cameraColumns: ColumnDef<z.infer<typeof cameraSchema>>[] = [
             }}
           >
             <Trash2 />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            title="Ver transmisión"
+            onClick={() => {
+              router.push(`camaras/${row.original.externalId}/stream?name=${encodeURIComponent(row.original.name)}`);
+            }}
+          >
+            <Video />
           </Button>
         </div>
       );
