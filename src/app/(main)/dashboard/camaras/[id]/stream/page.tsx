@@ -13,7 +13,7 @@ export default function CamaraStreamPage() {
     <div style={{ textAlign: "center" }}>
       <h2>Stream cámara: {name || cameraId}</h2>
       <img
-        src={`${process.env.NEXT_PUBLIC_WORKER_URL ?? "https://34.29.121.159"}/stream/${cameraId}`}
+        src={`${process.env.NEXT_PUBLIC_WORKER_URL ?? "https://35.184.100.72"}/stream/${cameraId}`}
         alt={`Stream de ${name || cameraId}`}
         style={{ width: "80%", maxWidth: 800, border: "1px solid #ccc" }}
       />
