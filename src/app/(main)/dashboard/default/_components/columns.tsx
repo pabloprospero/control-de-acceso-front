@@ -78,7 +78,7 @@ export const dashboardColumns: ColumnDef<any>[] = [
     cell: ({ row }) => (
       <div className="h-16 w-16">
         {row.original.photoPath ? (
-          <img src={row.original.photoPath} alt="Foto" className="h-full w-full rounded-md object-cover" />
+          <img src={process.env.NEXT_PUBLIC_API_URL+"/detected"+row.original.photoPath} alt="Foto" className="h-full w-full rounded-md object-cover" />
         ) : (
           <span className="text-gray-400">Sin foto</span>
         )}
