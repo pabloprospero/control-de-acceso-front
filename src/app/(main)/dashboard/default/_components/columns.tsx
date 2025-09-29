@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 import { DataTableColumnHeader } from "../../../../../components/data-table/data-table-column-header";
 
@@ -75,15 +76,33 @@ export const dashboardColumns: ColumnDef<any>[] = [
   {
     accessorKey: "photoPath",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Foto" />,
-    cell: ({ row }) => (
-      <div className="h-16 w-16">
-        {row.original.photoPath ? (
-          <img src={"https://acces-control.duckdns.org/detected/"+(row.original.photoPath.split("/").pop())} alt="Foto" className="h-full w-full rounded-md object-cover" />
-        ) : (
-          <span className="text-gray-400">Sin foto</span>
-        )}
-      </div>
-    ),
+    cell: ({ row }) => {
+      const photo = row.original.photoPath
+        ? "https://acces-control.duckdns.org/detected/" + row.original.photoPath.split("/").pop()
+        : null;
+
+      return (
+        <div className="flex h-16 w-16 items-center justify-center">
+          {photo ? (
+            <Dialog>
+              <DialogTrigger asChild>
+                <img
+                  src={photo}
+                  alt="Foto"
+                  className="h-full w-full cursor-pointer rounded-md object-cover hover:opacity-80"
+                />
+              </DialogTrigger>
+              <DialogContent className="max-w-3xl">
+                <DialogTitle>Vista previa</DialogTitle>
+                <img src={photo} alt="Foto grande" className="h-auto w-full rounded-lg object-contain" />
+              </DialogContent>
+            </Dialog>
+          ) : (
+            <span className="text-gray-400">Sin foto</span>
+          )}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "createdAt",
@@ -97,24 +116,24 @@ export const dashboardColumns: ColumnDef<any>[] = [
       );
     },
   },
-  {
-    id: "actions",
-    cell: () => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="data-[state=open]:bg-muted text-muted-foreground flex size-8" size="icon">
-            <EllipsisVertical />
-            <span className="sr-only">Acción</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-32">
-          <DropdownMenuItem>Editar</DropdownMenuItem>
-          <DropdownMenuItem>Ver</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem className="text-red-600">Eliminar</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
-    enableSorting: false,
-  },
+  // {
+  //   id: "actions",
+  //   cell: () => (
+  //     <DropdownMenu>
+  //       <DropdownMenuTrigger asChild>
+  //         <Button variant="ghost" className="data-[state=open]:bg-muted text-muted-foreground flex size-8" size="icon">
+  //           <EllipsisVertical />
+  //           <span className="sr-only">Acción</span>
+  //         </Button>
+  //       </DropdownMenuTrigger>
+  //       <DropdownMenuContent align="end" className="w-32">
+  //         <DropdownMenuItem>Editar</DropdownMenuItem>
+  //         <DropdownMenuItem>Ver</DropdownMenuItem>
+  //         <DropdownMenuSeparator />
+  //         <DropdownMenuItem className="text-red-600">Eliminar</DropdownMenuItem>
+  //       </DropdownMenuContent>
+  //     </DropdownMenu>
+  //   ),
+  //   enableSorting: false,
+  // },
 ];
