@@ -78,7 +78,7 @@ export const dashboardColumns: ColumnDef<any>[] = [
     cell: ({ row }) => (
       <div className="h-16 w-16">
         {row.original.photoPath ? (
-          <img src={"https://acces-control.duckdns.org/detected"+(row.original.split("/").pop())} alt="Foto" className="h-full w-full rounded-md object-cover" />
+          <img src={"https://acces-control.duckdns.org/detected"+(row.original.photoPath.split("/").pop())} alt="Foto" className="h-full w-full rounded-md object-cover" />
         ) : (
           <span className="text-gray-400">Sin foto</span>
         )}
